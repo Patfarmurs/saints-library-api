@@ -2,7 +2,6 @@ class Api::V1::UsersController < ApplicationController
   skip_before_action :authenticate_request, only: [:create]
   before_action :set_user, only: %i[show destroy]
 
-
   # GET /users
   def index
     @users = User.all
