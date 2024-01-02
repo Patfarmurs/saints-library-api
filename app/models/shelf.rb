@@ -1,5 +1,6 @@
 class Shelf < ApplicationRecord
-  has_many :books
+  belongs_to :book
+  belongs_to :user
 
-  validates :description, presence: true, uniqueness: { case_sensitive: false }
+  validates :description, presence: true
 end
