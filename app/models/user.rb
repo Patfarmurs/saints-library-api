@@ -1,3 +1,6 @@
 class User < ApplicationRecord
-  validates :username, presence: true, uniqueness: { case_sensitive: false }
+  has_many :shelves, dependent: :destroy
+  has_many :books, through: :reservations, dependent: :destroy
+
+  validates :username, uniqueness: { case_sensitive: false }
 end
