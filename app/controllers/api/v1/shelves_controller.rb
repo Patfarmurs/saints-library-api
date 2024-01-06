@@ -1,52 +1,60 @@
 class Api::V1::ShelvesController < ApplicationController
-  before_action :set_shelf, only: %i[show update destroy]
+  # before_action :set_shelf, only: [:destroy]
+  before_action :set_user, only: %i[create]
 
-  # GET /shelves
   def index
-    @shelves = Shelf.all
+    user = User.find_by(username: params[:username])
+    @shelves = Shelf.includes(:book).where(user_id: user.id).order(id: :desc)
+    response_data = @shelves.map do |shelf|
+      {
+        id: shelf.id,
+        userId: shelf.user_id,
+        bookName: shelf.Book.name
+      }
+    end
 
-    render json: @shelves
+    render json: response_data
   end
 
-  # GET /shelves/1
-  def show
-    render json: @shelf
-  end
-
-  # POST /shelves
   def create
-    @shelf = Shelf.new(shelf_params)
+    existing_shelf = Shelf.find_by(book_id: params[:book_id])
 
-    if @shelf.save
-      render json: @shelf, status: :created, location: @shelf
+    if existing_shelf
+      render json: { error: 'Shelf for this book already exists' }, status: :unprocessable_entity
     else
-      render json: @shelf.errors, status: :unprocessable_entity
+      @shelf = @user.shelves.build(shelf_params)
+
+      if @shelf.save
+        render json: @shelf, status: :created
+      else
+        render json: @shelf.errors, status: :unprocessable_entity
+      end
     end
   end
 
-  # PATCH/PUT /shelves/1
-  def update
-    if @shelf.update(shelf_params)
-      render json: @shelf
-    else
-      render json: @shelf.errors, status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /shelves/1
+  # Other actions and private methods
   def destroy
-    @shelf.destroy
+    if @shelf.destroy
+      render json: { message: 'Shelf deleted successfully!' }
+    else
+      render json: { error: 'Failed to delete the shelf' }, status: :unprocessable_entity
+    end
   end
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_shelf
     @shelf = Shelf.find(params[:id])
   end
 
-  # Only allow a list of trusted parameters through.
+  def set_user
+    @user = User.find_by(id: params[:user_id])
+    return if @user
+
+    render json: { error: 'User not found' }, status: :not_found
+  end
+
   def shelf_params
-    params.require(:shelf).permit(:column)
+    params.require(:shelf).permit(:user_id, :book_id)
   end
 end
