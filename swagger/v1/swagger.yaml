@@ -1,0 +1,75 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/books":
+    get:
+      summary: list books
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create book
+      responses:
+        '200':
+          description: successful
+  "/api/v1/books/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show book
+      responses:
+        '200':
+          description: successful
+    delete:
+      summary: delete book
+      responses:
+        '200':
+          description: successful
+  "/api/v1/shelves":
+    get:
+      summary: list shelves
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create shelf
+      responses:
+        '200':
+          description: successful
+  "/api/v1/shelves/{id}":
+    parameters:
+    - description: id
+      in: path
+      required: true
+      schema:
+        type: string
+    delete:
+      summary: delete shelf
+      responses:
+        '200':
+          description: successful
+  "/api/v1/users/register":
+    post:
+      summary: register user
+      responses:
+        '200':
+          description: successful
+  "/api/v1/users/login":
+    get:
+      summary: login user
+      responses:
+        '200':
+          description: successful
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: www.example.com
