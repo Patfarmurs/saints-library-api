@@ -84,6 +84,4 @@ test:
 #
 production:
   <<: *default
-  database: saints_library_api_production
-  username: saints_library_api
-  password: <%= ENV["SAINTS_LIBRARY_API_DATABASE_PASSWORD"] %>
+  url: <%= ENV["DATABASE_URL"] %>
